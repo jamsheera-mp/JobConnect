@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
           <div>
             <h5 className="font-semibold mb-4">Contact</h5>
             <div className="text-blue-100 space-y-2">
-              <p>Mangaluru, Kerala</p>
+              <p>Malappuram, Kerala</p>
               <p>+91 9876543210</p>
               <p>contact@jobconnect.com</p>
             </div>

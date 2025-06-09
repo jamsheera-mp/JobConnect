@@ -1,13 +1,11 @@
-
-
-import { AppRoutes } from './infrastructure/routing'
+import { AppRoutes } from './infrastructure/routing';
 
 function App() {
   return (
     <div className="App">
       <AppRoutes />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

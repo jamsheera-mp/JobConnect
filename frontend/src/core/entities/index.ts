@@ -1,2 +1,4 @@
-export * from './User'
-export * from './Job'
+export enum Role {
+  JobSeeker = 'jobSeeker',
+  Recruiter = 'recruiter',
+}

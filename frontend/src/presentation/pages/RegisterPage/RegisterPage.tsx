@@ -1,37 +1,45 @@
-import React, { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Building, User, Mail, Phone, Lock } from 'lucide-react'
-import { Header } from '@presentation/components/layout/Header'
-import { Footer } from '@presentation/components/layout/Footer'
-import { type Role, type User as UserType } from '@core/entities'
+import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Building, User, Mail, Phone, Lock } from 'lucide-react';
+import { Header } from '@presentation/components/layout/Header';
+import { Footer } from '@presentation/components/layout/Footer';
+import { type Role } from '@core/entities';
+import axios from 'axios';
 
 const RegisterPage: React.FC = () => {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const roleParam = searchParams.get('role')
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const roleParam = searchParams.get('role');
   const [role, setRole] = useState<Role>(
     roleParam === 'recruiter' ? 'recruiter' : 'jobSeeker'
-  )
-  const [formData, setFormData] = useState<UserType>({
-    id: '',
+  );
+  const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
     password: '',
     role: role,
     companyName: role === 'recruiter' ? '' : undefined,
-  })
+  });
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Form submitted:', formData)
-    navigate('/verify-otp', { state: { email: formData.email } })
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:3000/api/auth/register', {
+        ...formData,
+        role,
+      });
+      navigate('/verify-otp', { state: { email: formData.email } });
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Registration failed');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -46,8 +54,8 @@ const RegisterPage: React.FC = () => {
             <div className="flex justify-center mb-6">
               <button
                 onClick={() => {
-                  setRole('jobSeeker')
-                  navigate('/register?role=jobSeeker')
+                  setRole('jobSeeker');
+                  navigate('/register?role=jobSeeker');
                 }}
                 className={`px-4 py-2 rounded-l-lg font-medium ${role === 'jobSeeker' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
               >
@@ -55,14 +63,17 @@ const RegisterPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  setRole('recruiter')
-                  navigate('/register?role=recruiter')
+                  setRole('recruiter');
+                  navigate('/register?role=recruiter');
                 }}
                 className={`px-4 py-2 rounded-r-lg font-medium ${role === 'recruiter' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
               >
                 Recruiter
               </button>
             </div>
+            {error && (
+              <p className="text-center text-sm text-red-600 mb-4">{error}</p>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
@@ -185,7 +196,7 @@ const RegisterPage: React.FC = () => {
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default RegisterPage
+export default RegisterPage;
